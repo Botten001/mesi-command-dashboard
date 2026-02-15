@@ -67,7 +67,7 @@ export default function TaskBoard() {
   };
 
   return (
-    <div className="h-full flex flex-col rounded-xl border border-white/10 bg-zinc-950/40 backdrop-blur-sm">
+    <div className="h-full flex flex-col rounded-xl border border-white/10 bg-zinc-950/40 backdrop-blur-sm overflow-hidden">
       <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 flex-shrink-0">
         <div>
           <h2 className="text-sm font-semibold text-zinc-100">Task board</h2>
@@ -75,7 +75,7 @@ export default function TaskBoard() {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4">
         <div className="space-y-6">
           {columns.map((col) => (
             <div key={col.id}>

@@ -98,10 +98,10 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 w-full">
-        <div className="lg:col-span-2 h-full">
+        <div className="lg:col-span-2 min-h-0">
           <ActivityFeed activities={activities} />
         </div>
-        <div className="lg:col-span-1 h-full">
+        <div className="lg:col-span-1 min-h-0">
           <TaskBoard />
         </div>
       </div>
@@ -124,35 +124,35 @@ export default function Dashboard() {
     switch (activeTab) {
       case 'revenue':
         return (
-          <div className="h-full flex flex-col">
+          <div className="h-full flex flex-col min-h-0">
             {compactCard}
             <RevenuePage />
           </div>
         );
       case 'leads':
         return (
-          <div className="h-full flex flex-col">
+          <div className="h-full flex flex-col min-h-0">
             {compactCard}
             <LeadsPage />
           </div>
         );
       case 'actions':
         return (
-          <div className="h-full flex flex-col">
+          <div className="h-full flex flex-col min-h-0">
             {compactCard}
             <ActionsPage />
           </div>
         );
       case 'build':
         return (
-          <div className="h-full flex flex-col">
+          <div className="h-full flex flex-col min-h-0">
             {compactCard}
             <BuildQueuePage />
           </div>
         );
       case 'school':
         return (
-          <div className="h-full flex flex-col">
+          <div className="h-full flex flex-col min-h-0">
             {compactCard}
             <SchoolPage />
           </div>
@@ -164,11 +164,11 @@ export default function Dashboard() {
 
   return (
     <main className="h-screen overflow-hidden bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.10),transparent_55%),radial-gradient(900px_circle_at_80%_20%,rgba(16,185,129,0.08),transparent_55%),linear-gradient(to_bottom_right,#050608,#070A0F,#050608)] text-white p-6">
-      <div className="h-full w-full flex flex-col gap-6">
+      <div className="h-full w-full flex flex-col gap-6 min-h-0">
         <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
         
         {activeTab === 'dashboard' ? (
-          <div className="h-full w-full flex flex-col gap-6">
+          <div className="h-full w-full flex flex-col gap-6 min-h-0">
             {renderDashboardContent()}
           </div>
         ) : (
