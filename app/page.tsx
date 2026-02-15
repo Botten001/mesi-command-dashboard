@@ -10,6 +10,7 @@ import LeadsPage from '@/components/LeadsPage';
 import ActionsPage from '@/components/ActionsPage';
 import BuildQueuePage from '@/components/BuildQueuePage';
 import SchoolPage from '@/components/SchoolPage';
+import LoginPage from '@/components/LoginPage';
 
 interface AgentStatus {
   status: 'idle' | 'active';
@@ -25,6 +26,7 @@ interface Activity {
 }
 
 export default function Dashboard() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [agentStatus, setAgentStatus] = useState<AgentStatus>({
     status: 'idle',
@@ -35,7 +37,29 @@ export default function Dashboard() {
   const lastTaskRef = useRef<string>('__INITIAL__');
   const initialLoadRef = useRef(true);
 
+  // Check auth on load
   useEffect(() => {
+    const token = localStorage.getItem('mesi_auth_token');
+    if (token) {
+      // Verify token with server
+      fetch('/api/auth', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      }).then(res => {
+        setIsAuthenticated(res.ok);
+        if (!res.ok) {
+          localStorage.removeItem('mesi_auth_token');
+        }
+      }).catch(() => {
+        setIsAuthenticated(false);
+      });
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
     const loadHistory = async () => {
       try {
         const res = await fetch('/api/activity');
@@ -82,7 +106,30 @@ export default function Dashboard() {
     pollStatus();
     const interval = setInterval(pollStatus, 2000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isAuthenticated]);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('mesi_auth_token');
+    setIsAuthenticated(false);
+  };
+
+  // Show loading while checking auth
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.10),transparent_55%),radial-gradient(900px_circle_at_80%_20%,rgba(16,185,129,0.08),transparent_55%),linear-gradient(to_bottom_right,#050608,#070A0F,#050608)]">
+        <div className="text-zinc-500 text-sm">Loading...</div>
+      </div>
+    );
+  }
+
+  // Show login if not authenticated
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
 
   const renderDashboardContent = () => (
     <>
@@ -165,7 +212,15 @@ export default function Dashboard() {
   return (
     <main className="h-screen overflow-hidden bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.10),transparent_55%),radial-gradient(900px_circle_at_80%_20%,rgba(16,185,129,0.08),transparent_55%),linear-gradient(to_bottom_right,#050608,#070A0F,#050608)] text-white p-3 sm:p-6">
       <div className="h-full w-full flex flex-col gap-4 sm:gap-6 min-h-0">
-        <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
+        <div className="flex items-center justify-between">
+          <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
+          <button
+            onClick={handleLogout}
+            className="text-[10px] sm:text-xs text-zinc-500 hover:text-zinc-300 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-zinc-800/50"
+          >
+            Log out
+          </button>
+        </div>
         
         {activeTab === 'dashboard' ? (
           <div className="h-full w-full flex flex-col gap-4 sm:gap-6 min-h-0 overflow-y-auto lg:overflow-visible">
