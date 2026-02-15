@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import AgentStatusCard from '@/components/AgentStatusCard';
 import ActivityFeed from '@/components/ActivityFeed';
 import TaskBoard from '@/components/TaskBoard';
@@ -25,6 +25,7 @@ export default function Dashboard() {
     timestamp: Date.now()
   });
   const [activities, setActivities] = useState<Activity[]>([]);
+  const lastTaskRef = useRef<string>('');
 
   useEffect(() => {
     // Poll status every 2 seconds
@@ -33,11 +34,11 @@ export default function Dashboard() {
         const response = await fetch('/api/status');
         const data = await response.json();
         
-        const prevTask = agentStatus.task;
         setAgentStatus(data);
         
-        // Add activity log when task changes
-        if (prevTask !== data.task && data.task !== 'Connecting...') {
+        // Only add activity log when task actually changes
+        if (lastTaskRef.current !== data.task && data.task !== 'Connecting...') {
+          lastTaskRef.current = data.task;
           setActivities(prev => [{
             id: Date.now().toString(),
             timestamp: Date.now(),
@@ -61,7 +62,7 @@ export default function Dashboard() {
     setActivities([{
       id: Date.now().toString(),
       timestamp: Date.now(),
-      message: 'Dashboard loaded',
+      message: 'Dashboard connected',
       type: 'success'
     }]);
 
