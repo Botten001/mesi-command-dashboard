@@ -133,23 +133,27 @@ export default function Dashboard() {
 
   const renderDashboardContent = () => (
     <>
-      <div className="flex-shrink-0 flex justify-center px-2 sm:px-0">
-        <div className="w-full max-w-md">
-          <AgentStatusCard
-            name="Mesi Agent"
-            role="SQUAD LEAD"
-            status={agentStatus.status}
-            task={agentStatus.task}
-          />
+      <div className="flex-1 min-h-0 flex flex-col">
+        {/* Centered Agent Card */}
+        <div className="flex-shrink-0 flex items-center justify-center py-4 sm:py-6">
+          <div className="w-full max-w-xs sm:max-w-sm">
+            <AgentStatusCard
+              name="Mesi Agent"
+              role="SQUAD LEAD"
+              status={agentStatus.status}
+              task={agentStatus.task}
+            />
+          </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 flex-1 min-h-0 w-full">
-        <div className="lg:col-span-2 min-h-0 order-2 lg:order-1">
-          <ActivityFeed activities={activities} />
-        </div>
-        <div className="lg:col-span-1 min-h-0 order-1 lg:order-2">
-          <TaskBoard />
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 flex-1 min-h-0 w-full">
+          <div className="lg:col-span-2 min-h-0 order-2 lg:order-1">
+            <ActivityFeed activities={activities} />
+          </div>
+          <div className="lg:col-span-1 min-h-0 order-1 lg:order-2">
+            <TaskBoard />
+          </div>
         </div>
       </div>
     </>

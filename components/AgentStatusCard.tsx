@@ -43,29 +43,29 @@ export default function AgentStatusCard({ name, role, status, task, compact }: A
   return (
     <div
       className={
-        "relative rounded-xl px-4 sm:px-6 py-4 sm:py-5 transition-all border bg-zinc-950/40 backdrop-blur-sm " +
+        "relative rounded-lg sm:rounded-xl px-3 sm:px-4 py-3 sm:py-4 transition-all border bg-zinc-950/40 backdrop-blur-sm text-center " +
         (active
-          ? "border-emerald-500/35 shadow-[0_0_0_1px_rgba(16,185,129,0.25),0_0_18px_rgba(16,185,129,0.10)]"
+          ? "border-emerald-500/35 shadow-[0_0_0_1px_rgba(16,185,129,0.25),0_0_12px_rgba(16,185,129,0.08)]"
           : "border-white/10")
       }
     >
-      <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
+      <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
         <div
           className={
-            `w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full ${active ? 'bg-emerald-400' : 'bg-zinc-500'} ` +
+            `w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full ${active ? 'bg-emerald-400' : 'bg-zinc-500'} ` +
             `shadow ${active ? 'shadow-emerald-500/30' : ''}`
           }
         />
       </div>
 
-      <div className="space-y-1.5 sm:space-y-2">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <h1 className="text-sm sm:text-base font-semibold text-zinc-100">{name}</h1>
-          <span className="text-[10px] sm:text-[11px] font-medium text-zinc-200 border border-white/10 bg-white/[0.03] rounded-full px-1.5 sm:px-2 py-0.5">
+      <div className="space-y-1 sm:space-y-1.5">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+          <h1 className="text-xs sm:text-sm font-semibold text-zinc-100">{name}</h1>
+          <span className="text-[9px] sm:text-[10px] font-medium text-zinc-300 border border-white/10 bg-white/[0.03] rounded-full px-1.5 py-0.5">
             {role}
           </span>
         </div>
-        <p className="text-xs sm:text-sm text-zinc-300 leading-snug">{task}</p>
+        <p className="text-[10px] sm:text-xs text-zinc-400 leading-snug">{task}</p>
       </div>
     </div>
   );
