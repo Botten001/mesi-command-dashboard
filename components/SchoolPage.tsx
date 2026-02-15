@@ -1,39 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Assignment {
   id: string;
   title: string;
   subject: string;
   deadline: string;
+  deadlineTime?: string | null;
   status: 'pending' | 'submitted' | 'graded';
+  points?: number | null;
+  note?: string | null;
 }
 
 export default function SchoolPage() {
-  const [assignments] = useState<Assignment[]>([
-    {
-      id: '1',
-      title: 'Mathematics Problem Set 3',
-      subject: 'Mathematics',
-      deadline: '2026-02-20',
-      status: 'pending'
-    },
-    {
-      id: '2',
-      title: 'History Essay: Industrial Revolution',
-      subject: 'History',
-      deadline: '2026-02-18',
-      status: 'submitted'
-    },
-    {
-      id: '3',
-      title: 'Physics Lab Report',
-      subject: 'Physics',
-      deadline: '2026-02-15',
-      status: 'graded'
-    }
-  ]);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/assignments', { cache: 'no-store' });
+        const data = await res.json();
+        setAssignments(data.assignments || []);
+      } catch {
+        // ignore
+      }
+    };
+
+    load();
+    const interval = setInterval(load, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -50,11 +47,15 @@ export default function SchoolPage() {
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'pending': return 'Afventer';
+      case 'pending': return 'Venter';
       case 'submitted': return 'Afleveret';
       case 'graded': return 'Bedømt';
       default: return status;
     }
+  };
+
+  const isOverdue = (deadline: string) => {
+    return new Date(deadline) < new Date();
   };
 
   return (
@@ -76,35 +77,52 @@ export default function SchoolPage() {
             <span className="text-[11px] text-zinc-500">{assignments.length} total</span>
           </div>
 
-          <div className="space-y-2">
-            {assignments.map((assignment) => (
-              <div
-                key={assignment.id}
-                className="rounded-lg border border-white/10 bg-white/[0.03] p-4 hover:bg-white/[0.06] transition-all"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-zinc-200">{assignment.title}</h4>
-                    <p className="text-xs text-zinc-500 mt-1">{assignment.subject}</p>
+          {assignments.length === 0 ? (
+            <p className="text-zinc-500 text-sm">Ingen afleveringer endnu</p>
+          ) : (
+            <div className="space-y-2">
+              {assignments.map((assignment) => (
+                <div
+                  key={assignment.id}
+                  className="rounded-lg border border-white/10 bg-white/[0.03] p-4 hover:bg-white/[0.06] transition-all"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-zinc-500">#{assignment.id}</span>
+                        <h4 className="text-sm font-medium text-zinc-200">{assignment.title}</h4>
+                      </div>
+                      <p className="text-xs text-zinc-500 mt-1">{assignment.subject}</p>
+                    </div>
+                    <span className={`text-[10px] font-medium border rounded-full px-2 py-0.5 whitespace-nowrap ${getStatusBadge(assignment.status)}`}>
+                      {getStatusLabel(assignment.status)}
+                    </span>
                   </div>
-                  <span className={`text-[10px] font-medium border rounded-full px-2 py-0.5 whitespace-nowrap ${getStatusBadge(assignment.status)}`}>
-                    {getStatusLabel(assignment.status)}
-                  </span>
+                  
+                  <div className="mt-3 flex items-center gap-2 text-[11px]">
+                    <span className="text-zinc-500">Deadline:</span>
+                    <span className={isOverdue(assignment.deadline) ? 'text-red-400 font-medium' : 'text-zinc-400'}>
+                      {new Date(assignment.deadline).toLocaleDateString('da-DK')}
+                      {assignment.deadlineTime && ` kl. ${assignment.deadlineTime}`}
+                    </span>
+                  </div>
+
+                  {assignment.note && (
+                    <div className="mt-2 text-[11px] text-zinc-500 bg-zinc-900/50 rounded px-2 py-1.5">
+                      {assignment.note}
+                    </div>
+                  )}
                 </div>
-                <div className="mt-3 flex items-center gap-2 text-[11px] text-zinc-500">
-                  <span>Deadline:</span>
-                  <span className={new Date(assignment.deadline) < new Date() ? 'text-red-400' : 'text-zinc-400'}>
-                    {new Date(assignment.deadline).toLocaleDateString('da-DK')}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Empty state for other sections */}
-        <div className="border-t border-white/10 pt-6">
-          <p className="text-zinc-500 text-sm text-center">Flere sektioner kommer snart...</p>
+        {/* Add new assignment hint */}
+        <div className="border-t border-white/10 pt-4">
+          <p className="text-[11px] text-zinc-500">
+            Rediger <code className="bg-zinc-900 px-1 rounded">.cache/assignments.json</code> for at tilføje flere opgaver
+          </p>
         </div>
       </div>
     </div>
