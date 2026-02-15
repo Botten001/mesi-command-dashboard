@@ -31,12 +31,15 @@ function fmt(ts?: number) {
   });
 }
 
+type FilterType = 'all' | 'todo' | 'inprogress' | 'done';
+
 export default function TaskBoard() {
   const [tasks, setTasks] = useState<TasksResponse['columns']>({
     todo: [],
     inprogress: [],
     done: []
   });
+  const [filter, setFilter] = useState<FilterType>('all');
 
   useEffect(() => {
     const load = async () => {
@@ -54,29 +57,50 @@ export default function TaskBoard() {
     return () => clearInterval(interval);
   }, []);
 
-  const columns = [
-    { id: 'todo' as const, label: 'To do', stamp: 'createdAt' as const, color: 'amber' },
-    { id: 'inprogress' as const, label: 'In progress', stamp: 'startedAt' as const, color: 'blue' },
-    { id: 'done' as const, label: 'Done', stamp: 'doneAt' as const, color: 'emerald' },
-  ];
-
-  const getColorClasses = (color: string) => {
-    switch (color) {
-      case 'amber':
+  const getColorClasses = (status: string) => {
+    switch (status) {
+      case 'todo':
         return 'border-amber-500/30 bg-amber-500/5';
-      case 'blue':
+      case 'inprogress':
         return 'border-blue-500/30 bg-blue-500/5';
-      case 'emerald':
+      case 'done':
         return 'border-emerald-500/30 bg-emerald-500/5';
       default:
         return 'border-white/10 bg-white/[0.03]';
     }
   };
 
-  const allTasks = [
-    ...tasks.todo.map(t => ({ ...t, status: 'todo' as const, color: 'amber' })),
-    ...tasks.inprogress.map(t => ({ ...t, status: 'inprogress' as const, color: 'blue' })),
-    ...tasks.done.map(t => ({ ...t, status: 'done' as const, color: 'emerald' })),
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'todo':
+        return 'border-amber-500/30 text-amber-300';
+      case 'inprogress':
+        return 'border-blue-500/30 text-blue-300';
+      case 'done':
+        return 'border-emerald-500/30 text-emerald-300';
+      default:
+        return 'border-white/10 text-zinc-300';
+    }
+  };
+
+  const getFilteredTasks = () => {
+    if (filter === 'all') {
+      return [
+        ...tasks.todo.map(t => ({ ...t, status: 'todo' as const })),
+        ...tasks.inprogress.map(t => ({ ...t, status: 'inprogress' as const })),
+        ...tasks.done.map(t => ({ ...t, status: 'done' as const })),
+      ];
+    }
+    return tasks[filter].map(t => ({ ...t, status: filter }));
+  };
+
+  const filteredTasks = getFilteredTasks();
+
+  const filters: { id: FilterType; label: string; count: number; color: string }[] = [
+    { id: 'all', label: 'All', count: tasks.todo.length + tasks.inprogress.length + tasks.done.length, color: 'bg-zinc-500' },
+    { id: 'todo', label: 'To do', count: tasks.todo.length, color: 'bg-amber-500' },
+    { id: 'inprogress', label: 'In progress', count: tasks.inprogress.length, color: 'bg-blue-500' },
+    { id: 'done', label: 'Done', count: tasks.done.length, color: 'bg-emerald-500' },
   ];
 
   return (
@@ -84,42 +108,41 @@ export default function TaskBoard() {
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 flex-shrink-0">
         <div>
           <h2 className="text-xs sm:text-sm font-semibold text-zinc-100">Task board</h2>
-          <p className="text-[10px] sm:text-xs text-zinc-400 hidden sm:block">
-            {tasks.todo.length} todo · {tasks.inprogress.length} in progress · {tasks.done.length} done
-          </p>
-        </div>
-        <div className="flex gap-2 sm:gap-3 text-[10px] sm:text-xs">
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-amber-500/50"></span>
-            <span className="text-zinc-400">{tasks.todo.length}</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-blue-500/50"></span>
-            <span className="text-zinc-400">{tasks.inprogress.length}</span>
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-500/50"></span>
-            <span className="text-zinc-400">{tasks.done.length}</span>
-          </span>
         </div>
       </div>
 
+      {/* Filter tabs */}
+      <div className="flex items-center gap-1 px-3 sm:px-4 py-2 border-b border-white/10 overflow-x-auto">
+        {filters.map((f) => (
+          <button
+            key={f.id}
+            onClick={() => setFilter(f.id)}
+            className={
+              "flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-md text-[10px] sm:text-xs font-medium transition-all whitespace-nowrap " +
+              (filter === f.id
+                ? "bg-zinc-800 text-white border border-white/10"
+                : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50")
+            }
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${f.color}`}></span>
+            <span>{f.label}</span>
+            <span className="text-zinc-500">({f.count})</span>
+          </button>
+        ))}
+      </div>
+
       <div className="flex-1 overflow-y-auto p-3 sm:p-4">
-        {allTasks.length === 0 ? (
-          <p className="text-zinc-500 text-xs sm:text-sm text-center py-8">No tasks yet</p>
+        {filteredTasks.length === 0 ? (
+          <p className="text-zinc-500 text-xs sm:text-sm text-center py-8">No tasks</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
-            {allTasks.map((task) => (
+            {filteredTasks.map((task) => (
               <div
                 key={task.id}
-                className={`rounded-lg border p-3 sm:p-4 ${getColorClasses(task.color)} hover:bg-white/[0.06] transition-all`}
+                className={`rounded-lg border p-3 sm:p-4 ${getColorClasses(task.status)} hover:bg-white/[0.06] transition-all`}
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className={`text-[9px] sm:text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${
-                    task.status === 'todo' ? 'border-amber-500/30 text-amber-300' :
-                    task.status === 'inprogress' ? 'border-blue-500/30 text-blue-300' :
-                    'border-emerald-500/30 text-emerald-300'
-                  }`}>
+                  <span className={`text-[9px] sm:text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${getStatusBadge(task.status)}`}>
                     {task.status === 'todo' ? 'To do' : task.status === 'inprogress' ? 'In progress' : 'Done'}
                   </span>
                 </div>
