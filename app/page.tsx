@@ -110,7 +110,7 @@ export default function Dashboard() {
 
   const renderTabContent = () => {
     const compactCard = (
-      <div className="flex-shrink-0 mb-4">
+      <div className="flex-shrink-0 mb-4 flex justify-end">
         <AgentStatusCard
           name="Mesi Agent"
           role="SQUAD LEAD"
