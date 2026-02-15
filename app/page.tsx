@@ -21,57 +21,51 @@ interface Activity {
 export default function Dashboard() {
   const [agentStatus, setAgentStatus] = useState<AgentStatus>({
     status: 'idle',
-    task: 'Waiting for task',
+    task: 'Connecting...',
     timestamp: Date.now()
   });
   const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
-    const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001');
-
-    ws.onopen = () => {
-      console.log('WebSocket connected');
-      setActivities(prev => [{
-        id: Date.now().toString(),
-        timestamp: Date.now(),
-        message: 'Dashboard connected to Mesi Agent',
-        type: 'success'
-      }, ...prev]);
-    };
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      
-      if (data.type === 'status') {
+    // Poll status every 2 seconds
+    const pollStatus = async () => {
+      try {
+        const response = await fetch('/api/status');
+        const data = await response.json();
+        
+        const prevTask = agentStatus.task;
+        setAgentStatus(data);
+        
+        // Add activity log when task changes
+        if (prevTask !== data.task && data.task !== 'Connecting...') {
+          setActivities(prev => [{
+            id: Date.now().toString(),
+            timestamp: Date.now(),
+            message: `Status: ${data.task}`,
+            type: data.status === 'active' ? 'success' : 'info'
+          }, ...prev.slice(0, 49)]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch status:', error);
         setAgentStatus({
-          status: data.status,
-          task: data.task,
-          timestamp: data.timestamp
+          status: 'idle',
+          task: 'Connection error',
+          timestamp: Date.now()
         });
-      } else if (data.type === 'activity') {
-        setActivities(prev => [{
-          id: data.id || Date.now().toString(),
-          timestamp: data.timestamp,
-          message: data.message,
-          type: data.level || 'info'
-        }, ...prev.slice(0, 49)]);
       }
     };
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+    pollStatus(); // Initial fetch
+    const interval = setInterval(pollStatus, 2000);
+    
+    setActivities([{
+      id: Date.now().toString(),
+      timestamp: Date.now(),
+      message: 'Dashboard loaded',
+      type: 'success'
+    }]);
 
-    ws.onclose = () => {
-      console.log('WebSocket disconnected, reconnecting in 3s...');
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
-    };
-
-    return () => {
-      ws.close();
-    };
+    return () => clearInterval(interval);
   }, []);
 
   return (
