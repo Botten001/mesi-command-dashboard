@@ -109,17 +109,54 @@ export default function Dashboard() {
   );
 
   const renderTabContent = () => {
+    const compactCard = (
+      <div className="flex-shrink-0 mb-4">
+        <AgentStatusCard
+          name="Mesi Agent"
+          role="SQUAD LEAD"
+          status={agentStatus.status}
+          task={agentStatus.task}
+          compact
+        />
+      </div>
+    );
+
     switch (activeTab) {
       case 'revenue':
-        return <RevenuePage />;
+        return (
+          <div className="h-full flex flex-col">
+            {compactCard}
+            <RevenuePage />
+          </div>
+        );
       case 'leads':
-        return <LeadsPage />;
+        return (
+          <div className="h-full flex flex-col">
+            {compactCard}
+            <LeadsPage />
+          </div>
+        );
       case 'actions':
-        return <ActionsPage />;
+        return (
+          <div className="h-full flex flex-col">
+            {compactCard}
+            <ActionsPage />
+          </div>
+        );
       case 'build':
-        return <BuildQueuePage />;
+        return (
+          <div className="h-full flex flex-col">
+            {compactCard}
+            <BuildQueuePage />
+          </div>
+        );
       case 'school':
-        return <SchoolPage />;
+        return (
+          <div className="h-full flex flex-col">
+            {compactCard}
+            <SchoolPage />
+          </div>
+        );
       default:
         return renderDashboardContent();
     }
