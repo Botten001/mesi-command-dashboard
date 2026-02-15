@@ -5,6 +5,9 @@ import { useEffect, useState } from 'react';
 interface Task {
   id: string;
   title: string;
+  createdAt?: number;
+  startedAt?: number;
+  doneAt?: number;
 }
 
 interface TasksResponse {
@@ -14,6 +17,18 @@ interface TasksResponse {
     done: Task[];
   };
   updatedAt?: number;
+}
+
+function fmt(ts?: number) {
+  if (!ts) return null;
+  const d = new Date(ts);
+  return d.toLocaleString([], {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 }
 
 export default function TaskBoard() {
@@ -40,9 +55,9 @@ export default function TaskBoard() {
   }, []);
 
   const columns = [
-    { id: 'todo' as const, label: 'To do' },
-    { id: 'inprogress' as const, label: 'In progress' },
-    { id: 'done' as const, label: 'Done' },
+    { id: 'todo' as const, label: 'To do', stamp: 'createdAt' as const },
+    { id: 'inprogress' as const, label: 'In progress', stamp: 'startedAt' as const },
+    { id: 'done' as const, label: 'Done', stamp: 'doneAt' as const },
   ];
 
   const badge = (id: string) => {
@@ -77,9 +92,14 @@ export default function TaskBoard() {
                 {tasks[col.id].map((t) => (
                   <div
                     key={t.id}
-                    className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-zinc-200"
+                    className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3"
                   >
-                    {t.title}
+                    <div className="text-sm text-zinc-200">{t.title}</div>
+                    <div className="mt-1 text-[11px] text-zinc-500">
+                      {col.id === 'todo' && (fmt(t.createdAt) ? `Created • ${fmt(t.createdAt)}` : 'Created • —')}
+                      {col.id === 'inprogress' && (fmt(t.startedAt) ? `Started • ${fmt(t.startedAt)}` : 'Started • —')}
+                      {col.id === 'done' && (fmt(t.doneAt) ? `Done • ${fmt(t.doneAt)}` : 'Done • —')}
+                    </div>
                   </div>
                 ))}
                 {tasks[col.id].length === 0 && (
