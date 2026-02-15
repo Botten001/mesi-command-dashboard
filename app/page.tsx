@@ -86,7 +86,7 @@ export default function Dashboard() {
 
   const renderDashboardContent = () => (
     <>
-      <div className="flex-shrink-0 flex justify-center">
+      <div className="flex-shrink-0 flex justify-center px-2 sm:px-0">
         <div className="w-full max-w-md">
           <AgentStatusCard
             name="Mesi Agent"
@@ -97,11 +97,11 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 w-full">
-        <div className="lg:col-span-2 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 flex-1 min-h-0 w-full">
+        <div className="lg:col-span-2 min-h-0 order-2 lg:order-1">
           <ActivityFeed activities={activities} />
         </div>
-        <div className="lg:col-span-1 min-h-0">
+        <div className="lg:col-span-1 min-h-0 order-1 lg:order-2">
           <TaskBoard />
         </div>
       </div>
@@ -110,7 +110,7 @@ export default function Dashboard() {
 
   const renderTabContent = () => {
     const compactCard = (
-      <div className="flex-shrink-0 mb-4 flex justify-end">
+      <div className="flex-shrink-0 mb-3 sm:mb-4 flex justify-start sm:justify-end">
         <AgentStatusCard
           name="Mesi Agent"
           role="SQUAD LEAD"
@@ -163,16 +163,16 @@ export default function Dashboard() {
   };
 
   return (
-    <main className="h-screen overflow-hidden bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.10),transparent_55%),radial-gradient(900px_circle_at_80%_20%,rgba(16,185,129,0.08),transparent_55%),linear-gradient(to_bottom_right,#050608,#070A0F,#050608)] text-white p-6">
-      <div className="h-full w-full flex flex-col gap-6 min-h-0">
+    <main className="h-screen overflow-hidden bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.10),transparent_55%),radial-gradient(900px_circle_at_80%_20%,rgba(16,185,129,0.08),transparent_55%),linear-gradient(to_bottom_right,#050608,#070A0F,#050608)] text-white p-3 sm:p-6">
+      <div className="h-full w-full flex flex-col gap-4 sm:gap-6 min-h-0">
         <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
         
         {activeTab === 'dashboard' ? (
-          <div className="h-full w-full flex flex-col gap-6 min-h-0">
+          <div className="h-full w-full flex flex-col gap-4 sm:gap-6 min-h-0 overflow-y-auto lg:overflow-visible">
             {renderDashboardContent()}
           </div>
         ) : (
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 min-h-0 overflow-y-auto">
             {renderTabContent()}
           </div>
         )}
