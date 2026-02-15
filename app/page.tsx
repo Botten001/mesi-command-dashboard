@@ -29,6 +29,26 @@ export default function Dashboard() {
   const initialLoadRef = useRef(true);
 
   useEffect(() => {
+    // Load persisted activity history
+    const loadHistory = async () => {
+      try {
+        const res = await fetch('/api/activity');
+        const data = await res.json();
+        const items = (data.activities || []).map((a: any) => ({
+          id: a.id,
+          timestamp: a.timestamp,
+          message: a.message,
+          type: a.level || 'info'
+        }));
+        // newest first
+        setActivities(items.reverse());
+      } catch {
+        // ignore
+      }
+    };
+
+    loadHistory();
+
     const pollStatus = async () => {
       try {
         const response = await fetch('/api/status');
@@ -58,13 +78,6 @@ export default function Dashboard() {
 
     pollStatus();
     const interval = setInterval(pollStatus, 2000);
-
-    setActivities([{
-      id: 'init',
-      timestamp: Date.now(),
-      message: 'Dashboard connected',
-      type: 'success'
-    }]);
 
     return () => clearInterval(interval);
   }, []);
