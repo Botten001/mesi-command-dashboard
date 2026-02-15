@@ -1,25 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Task {
   id: string;
   title: string;
-  status: 'todo' | 'inprogress' | 'done';
+}
+
+interface TasksResponse {
+  columns: {
+    todo: Task[];
+    inprogress: Task[];
+    done: Task[];
+  };
+  updatedAt?: number;
 }
 
 export default function TaskBoard() {
-  const [tasks] = useState<Task[]>([
-    { id: '1', title: 'Build command dashboard', status: 'done' },
-    { id: '2', title: 'Setup WebSocket server', status: 'done' },
-    { id: '3', title: 'Deploy to Vercel', status: 'done' },
-    { id: '4', title: 'Polish UI design', status: 'inprogress' },
-  ]);
+  const [tasks, setTasks] = useState<TasksResponse['columns']>({
+    todo: [],
+    inprogress: [],
+    done: []
+  });
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/tasks', { cache: 'no-store' });
+        const data: TasksResponse = await res.json();
+        setTasks(data.columns || { todo: [], inprogress: [], done: [] });
+      } catch {
+        // ignore
+      }
+    };
+
+    load();
+    const interval = setInterval(load, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   const columns = [
-    { id: 'todo', label: 'To Do', gradient: 'from-zinc-700 to-zinc-800' },
-    { id: 'inprogress', label: 'In Progress', gradient: 'from-cyan-600 to-blue-600' },
-    { id: 'done', label: 'Done', gradient: 'from-green-600 to-emerald-600' },
+    { id: 'todo' as const, label: 'To Do', gradient: 'from-zinc-700 to-zinc-800' },
+    { id: 'inprogress' as const, label: 'In Progress', gradient: 'from-cyan-600 to-blue-600' },
+    { id: 'done' as const, label: 'Done', gradient: 'from-green-600 to-emerald-600' },
   ];
 
   return (
@@ -34,17 +57,15 @@ export default function TaskBoard() {
               {column.label}
             </div>
             <div className="space-y-2">
-              {tasks
-                .filter((task) => task.status === column.id)
-                .map((task) => (
-                  <div
-                    key={task.id}
-                    className="bg-zinc-800/50 border border-zinc-700/50 rounded p-3 text-sm hover:bg-zinc-800/80 transition-all"
-                  >
-                    {task.title}
-                  </div>
-                ))}
-              {tasks.filter((task) => task.status === column.id).length === 0 && (
+              {tasks[column.id].map((task) => (
+                <div
+                  key={task.id}
+                  className="bg-zinc-800/50 border border-zinc-700/50 rounded p-3 text-sm hover:bg-zinc-800/80 transition-all"
+                >
+                  {task.title}
+                </div>
+              ))}
+              {tasks[column.id].length === 0 && (
                 <p className="text-zinc-600 text-xs italic pl-3">No tasks</p>
               )}
             </div>
