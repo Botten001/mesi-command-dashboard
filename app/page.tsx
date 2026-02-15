@@ -33,15 +33,15 @@ export default function Dashboard() {
       try {
         const response = await fetch('/api/status');
         const data = await response.json();
-        
+
         setAgentStatus(data);
-        
+
         if (initialLoadRef.current) {
           initialLoadRef.current = false;
           lastTaskRef.current = data.task;
           return;
         }
-        
+
         if (lastTaskRef.current !== data.task) {
           lastTaskRef.current = data.task;
           setActivities(prev => [{
@@ -58,7 +58,7 @@ export default function Dashboard() {
 
     pollStatus();
     const interval = setInterval(pollStatus, 2000);
-    
+
     setActivities([{
       id: 'init',
       timestamp: Date.now(),
@@ -71,17 +71,19 @@ export default function Dashboard() {
 
   return (
     <main className="h-screen overflow-hidden bg-gradient-to-br from-black via-zinc-900 to-black text-white p-6">
-      <div className="max-w-7xl mx-auto h-full flex flex-col gap-6">
-        <div className="flex-shrink-0">
-          <AgentStatusCard
-            name="Mesi Agent"
-            role="SQUAD LEAD"
-            status={agentStatus.status}
-            task={agentStatus.task}
-          />
+      <div className="h-full w-full flex flex-col gap-6">
+        <div className="flex-shrink-0 flex justify-center">
+          <div className="w-full max-w-md">
+            <AgentStatusCard
+              name="Mesi Agent"
+              role="SQUAD LEAD"
+              status={agentStatus.status}
+              task={agentStatus.task}
+            />
+          </div>
         </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0">
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 w-full">
           <div className="lg:col-span-2 h-full">
             <ActivityFeed activities={activities} />
           </div>
