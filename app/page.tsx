@@ -21,7 +21,7 @@ interface Activity {
 export default function Dashboard() {
   const [agentStatus, setAgentStatus] = useState<AgentStatus>({
     status: 'idle',
-    task: 'Connecting...',
+    task: 'Connecting…',
     timestamp: Date.now()
   });
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -29,7 +29,6 @@ export default function Dashboard() {
   const initialLoadRef = useRef(true);
 
   useEffect(() => {
-    // Load persisted activity history
     const loadHistory = async () => {
       try {
         const res = await fetch('/api/activity');
@@ -40,11 +39,8 @@ export default function Dashboard() {
           message: a.message,
           type: a.level || 'info'
         }));
-        // newest first
         setActivities(items.reverse());
-      } catch {
-        // ignore
-      }
+      } catch {}
     };
 
     loadHistory();
@@ -71,19 +67,18 @@ export default function Dashboard() {
             type: data.status === 'active' ? 'success' : 'info'
           }, ...prev.slice(0, 49)]);
         }
-      } catch (error) {
-        console.error('Failed to fetch status:', error);
+      } catch {
+        // ignore
       }
     };
 
     pollStatus();
     const interval = setInterval(pollStatus, 2000);
-
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <main className="h-screen overflow-hidden bg-gradient-to-br from-black via-zinc-900 to-black text-white p-6">
+    <main className="h-screen overflow-hidden bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.10),transparent_55%),radial-gradient(900px_circle_at_80%_20%,rgba(16,185,129,0.08),transparent_55%),linear-gradient(to_bottom_right,#050608,#070A0F,#050608)] text-white p-6">
       <div className="h-full w-full flex flex-col gap-6">
         <div className="flex-shrink-0 flex justify-center">
           <div className="w-full max-w-md">

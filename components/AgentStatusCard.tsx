@@ -11,27 +11,29 @@ export default function AgentStatusCard({ name, role, status, task }: AgentStatu
   return (
     <div
       className={
-        "relative rounded-lg p-6 transition-all " +
+        "relative rounded-xl px-6 py-5 transition-all border bg-zinc-950/40 backdrop-blur-sm " +
         (active
-          ? "bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 border border-green-500/70 shadow-[0_0_0_1px_rgba(34,197,94,0.6),0_0_24px_rgba(34,197,94,0.20)]"
-          : "bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 border border-zinc-700")
+          ? "border-emerald-500/35 shadow-[0_0_0_1px_rgba(16,185,129,0.25),0_0_18px_rgba(16,185,129,0.10)]"
+          : "border-white/10")
       }
     >
       <div className="absolute top-4 right-4">
         <div
           className={
-            `w-3 h-3 rounded-full ${active ? 'bg-green-500' : 'bg-gray-500'} ` +
-            `animate-pulse shadow-lg ${active ? 'shadow-green-500/50' : ''}`
+            `w-2.5 h-2.5 rounded-full ${active ? 'bg-emerald-400' : 'bg-zinc-500'} ` +
+            `shadow ${active ? 'shadow-emerald-500/30' : ''}`
           }
         />
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-white">{name}</h1>
-        <div className="inline-block px-3 py-1 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/50 rounded text-cyan-400 text-sm font-semibold">
-          {role}
+        <div className="flex items-center gap-3">
+          <h1 className="text-base font-semibold text-zinc-100">{name}</h1>
+          <span className="text-[11px] font-medium text-zinc-200 border border-white/10 bg-white/[0.03] rounded-full px-2 py-0.5">
+            {role}
+          </span>
         </div>
-        <p className="text-zinc-400 text-sm mt-4">{task}</p>
+        <p className="text-sm text-zinc-300 leading-snug">{task}</p>
       </div>
     </div>
   );

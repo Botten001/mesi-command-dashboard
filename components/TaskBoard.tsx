@@ -40,37 +40,55 @@ export default function TaskBoard() {
   }, []);
 
   const columns = [
-    { id: 'todo' as const, label: 'To Do', gradient: 'from-zinc-700 to-zinc-800' },
-    { id: 'inprogress' as const, label: 'In Progress', gradient: 'from-cyan-600 to-blue-600' },
-    { id: 'done' as const, label: 'Done', gradient: 'from-green-600 to-emerald-600' },
+    { id: 'todo' as const, label: 'To do' },
+    { id: 'inprogress' as const, label: 'In progress' },
+    { id: 'done' as const, label: 'Done' },
   ];
 
+  const badge = (id: string) => {
+    if (id === 'inprogress') return 'bg-blue-500/10 text-blue-200 border-blue-500/20';
+    if (id === 'done') return 'bg-emerald-500/10 text-emerald-200 border-emerald-500/20';
+    return 'bg-white/[0.04] text-zinc-200 border-white/10';
+  };
+
   return (
-    <div className="bg-gradient-to-br from-zinc-900/80 to-zinc-900/50 backdrop-blur border border-zinc-800 rounded-lg p-6 h-full flex flex-col">
-      <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-        Task Board
-      </h2>
-      <div className="space-y-4 overflow-y-auto flex-1 pr-2">
-        {columns.map((column) => (
-          <div key={column.id}>
-            <div className={`bg-gradient-to-r ${column.gradient} text-white text-sm font-semibold mb-2 px-3 py-1 rounded`}>
-              {column.label}
-            </div>
-            <div className="space-y-2">
-              {tasks[column.id].map((task) => (
-                <div
-                  key={task.id}
-                  className="bg-zinc-800/50 border border-zinc-700/50 rounded p-3 text-sm hover:bg-zinc-800/80 transition-all"
-                >
-                  {task.title}
+    <div className="h-full flex flex-col rounded-xl border border-white/10 bg-zinc-950/40 backdrop-blur-sm">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+        <div>
+          <h2 className="text-sm font-semibold text-zinc-100">Task board</h2>
+          <p className="text-xs text-zinc-400">What we’re doing right now</p>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="space-y-6">
+          {columns.map((col) => (
+            <div key={col.id}>
+              <div className="flex items-center justify-between px-2 mb-2">
+                <div className="flex items-center gap-2">
+                  <span className={`text-[11px] font-medium border rounded-full px-2 py-0.5 ${badge(col.id)}`}>
+                    {col.label}
+                  </span>
+                  <span className="text-[11px] text-zinc-500">{tasks[col.id].length}</span>
                 </div>
-              ))}
-              {tasks[column.id].length === 0 && (
-                <p className="text-zinc-600 text-xs italic pl-3">No tasks</p>
-              )}
+              </div>
+
+              <div className="space-y-2">
+                {tasks[col.id].map((t) => (
+                  <div
+                    key={t.id}
+                    className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-zinc-200"
+                  >
+                    {t.title}
+                  </div>
+                ))}
+                {tasks[col.id].length === 0 && (
+                  <div className="px-2 text-xs text-zinc-500 italic">No tasks</div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

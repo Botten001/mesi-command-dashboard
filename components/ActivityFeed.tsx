@@ -10,35 +10,46 @@ interface ActivityFeedProps {
 }
 
 export default function ActivityFeed({ activities }: ActivityFeedProps) {
-  const getTypeColor = (type: string) => {
+  const getTypeStyles = (type: string) => {
     switch (type) {
-      case 'success': return 'text-green-400 border-green-500/50 bg-green-500/5';
-      case 'warning': return 'text-yellow-400 border-yellow-500/50 bg-yellow-500/5';
-      default: return 'text-zinc-400 border-zinc-700/50 bg-zinc-800/30';
+      case 'success':
+        return 'border-emerald-500/30 bg-emerald-500/5 text-emerald-200';
+      case 'warning':
+        return 'border-amber-500/30 bg-amber-500/5 text-amber-200';
+      default:
+        return 'border-white/10 bg-white/[0.03] text-zinc-200';
     }
   };
 
   return (
-    <div className="bg-gradient-to-br from-zinc-900/80 to-zinc-900/50 backdrop-blur border border-zinc-800 rounded-lg p-6 h-full flex flex-col">
-      <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-        Live Activity Feed
-      </h2>
-      <div className="space-y-3 overflow-y-auto flex-1 pr-2">
-        {activities.length === 0 ? (
-          <p className="text-zinc-500 text-sm">No activity yet...</p>
-        ) : (
-          activities.map((activity) => (
-            <div
-              key={activity.id}
-              className={`border-l-2 pl-4 py-3 rounded-r ${getTypeColor(activity.type)} transition-all`}
-            >
-              <p className="text-sm font-medium">{activity.message}</p>
-              <span className="text-xs text-zinc-600">
-                {new Date(activity.timestamp).toLocaleTimeString()}
-              </span>
-            </div>
-          ))
-        )}
+    <div className="h-full flex flex-col rounded-xl border border-white/10 bg-zinc-950/40 backdrop-blur-sm">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+        <div>
+          <h2 className="text-sm font-semibold text-zinc-100">Live Activity</h2>
+          <p className="text-xs text-zinc-400">Latest updates from Mesi Agent</p>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="space-y-2">
+          {activities.length === 0 ? (
+            <p className="text-zinc-500 text-sm px-2">No activity yet…</p>
+          ) : (
+            activities.map((activity) => (
+              <div
+                key={activity.id}
+                className={`rounded-lg border px-4 py-3 ${getTypeStyles(activity.type)}`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <p className="text-sm leading-snug">{activity.message}</p>
+                  <span className="text-[11px] text-zinc-500 whitespace-nowrap">
+                    {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
