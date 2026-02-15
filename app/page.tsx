@@ -25,10 +25,10 @@ export default function Dashboard() {
     timestamp: Date.now()
   });
   const [activities, setActivities] = useState<Activity[]>([]);
-  const lastTaskRef = useRef<string>('');
+  const lastTaskRef = useRef<string>('__INITIAL__');
+  const initialLoadRef = useRef(true);
 
   useEffect(() => {
-    // Poll status every 2 seconds
     const pollStatus = async () => {
       try {
         const response = await fetch('/api/status');
@@ -36,31 +36,34 @@ export default function Dashboard() {
         
         setAgentStatus(data);
         
-        // Only add activity log when task actually changes
-        if (lastTaskRef.current !== data.task && data.task !== 'Connecting...') {
+        // Skip logging on initial load
+        if (initialLoadRef.current) {
+          initialLoadRef.current = false;
+          lastTaskRef.current = data.task;
+          return;
+        }
+        
+        // Only log when task actually changes
+        if (lastTaskRef.current !== data.task) {
           lastTaskRef.current = data.task;
           setActivities(prev => [{
             id: Date.now().toString(),
             timestamp: Date.now(),
-            message: `Status: ${data.task}`,
+            message: data.task,
             type: data.status === 'active' ? 'success' : 'info'
           }, ...prev.slice(0, 49)]);
         }
       } catch (error) {
         console.error('Failed to fetch status:', error);
-        setAgentStatus({
-          status: 'idle',
-          task: 'Connection error',
-          timestamp: Date.now()
-        });
       }
     };
 
-    pollStatus(); // Initial fetch
+    pollStatus();
     const interval = setInterval(pollStatus, 2000);
     
+    // Only log initial connect once
     setActivities([{
-      id: Date.now().toString(),
+      id: 'init',
       timestamp: Date.now(),
       message: 'Dashboard connected',
       type: 'success'
