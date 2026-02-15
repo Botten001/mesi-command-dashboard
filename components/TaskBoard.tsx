@@ -55,60 +55,88 @@ export default function TaskBoard() {
   }, []);
 
   const columns = [
-    { id: 'todo' as const, label: 'To do', stamp: 'createdAt' as const },
-    { id: 'inprogress' as const, label: 'In progress', stamp: 'startedAt' as const },
-    { id: 'done' as const, label: 'Done', stamp: 'doneAt' as const },
+    { id: 'todo' as const, label: 'To do', stamp: 'createdAt' as const, color: 'amber' },
+    { id: 'inprogress' as const, label: 'In progress', stamp: 'startedAt' as const, color: 'blue' },
+    { id: 'done' as const, label: 'Done', stamp: 'doneAt' as const, color: 'emerald' },
   ];
 
-  const badge = (id: string) => {
-    if (id === 'inprogress') return 'bg-blue-500/10 text-blue-200 border-blue-500/20';
-    if (id === 'done') return 'bg-emerald-500/10 text-emerald-200 border-emerald-500/20';
-    return 'bg-white/[0.04] text-zinc-200 border-white/10';
+  const getColorClasses = (color: string) => {
+    switch (color) {
+      case 'amber':
+        return 'border-amber-500/30 bg-amber-500/5';
+      case 'blue':
+        return 'border-blue-500/30 bg-blue-500/5';
+      case 'emerald':
+        return 'border-emerald-500/30 bg-emerald-500/5';
+      default:
+        return 'border-white/10 bg-white/[0.03]';
+    }
   };
+
+  const allTasks = [
+    ...tasks.todo.map(t => ({ ...t, status: 'todo' as const, color: 'amber' })),
+    ...tasks.inprogress.map(t => ({ ...t, status: 'inprogress' as const, color: 'blue' })),
+    ...tasks.done.map(t => ({ ...t, status: 'done' as const, color: 'emerald' })),
+  ];
 
   return (
     <div className="h-full flex flex-col rounded-xl border border-white/10 bg-zinc-950/40 backdrop-blur-sm overflow-hidden">
       <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-white/10 flex-shrink-0">
         <div>
           <h2 className="text-xs sm:text-sm font-semibold text-zinc-100">Task board</h2>
-          <p className="text-[10px] sm:text-xs text-zinc-400 hidden sm:block">What we're doing right now</p>
+          <p className="text-[10px] sm:text-xs text-zinc-400 hidden sm:block">
+            {tasks.todo.length} todo · {tasks.inprogress.length} in progress · {tasks.done.length} done
+          </p>
+        </div>
+        <div className="flex gap-2 sm:gap-3 text-[10px] sm:text-xs">
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-amber-500/50"></span>
+            <span className="text-zinc-400">{tasks.todo.length}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-blue-500/50"></span>
+            <span className="text-zinc-400">{tasks.inprogress.length}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-emerald-500/50"></span>
+            <span className="text-zinc-400">{tasks.done.length}</span>
+          </span>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-3 sm:py-4">
-        <div className="space-y-4 sm:space-y-6">
-          {columns.map((col) => (
-            <div key={col.id}>
-              <div className="flex items-center justify-between px-1 sm:px-2 mb-1.5 sm:mb-2">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <span className={`text-[10px] sm:text-[11px] font-medium border rounded-full px-1.5 sm:px-2 py-0.5 ${badge(col.id)}`}>
-                    {col.label}
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4">
+        {allTasks.length === 0 ? (
+          <p className="text-zinc-500 text-xs sm:text-sm text-center py-8">No tasks yet</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+            {allTasks.map((task) => (
+              <div
+                key={task.id}
+                className={`rounded-lg border p-3 sm:p-4 ${getColorClasses(task.color)} hover:bg-white/[0.06] transition-all`}
+              >
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <span className={`text-[9px] sm:text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${
+                    task.status === 'todo' ? 'border-amber-500/30 text-amber-300' :
+                    task.status === 'inprogress' ? 'border-blue-500/30 text-blue-300' :
+                    'border-emerald-500/30 text-emerald-300'
+                  }`}>
+                    {task.status === 'todo' ? 'To do' : task.status === 'inprogress' ? 'In progress' : 'Done'}
                   </span>
-                  <span className="text-[10px] sm:text-[11px] text-zinc-500">{tasks[col.id].length}</span>
+                </div>
+                
+                <h3 className="text-xs sm:text-sm font-medium text-zinc-200 leading-snug mb-2 line-clamp-2">
+                  {task.title}
+                </h3>
+                
+                <div className="text-[9px] sm:text-[10px] text-zinc-500">
+                  {task.status === 'todo' && (fmt(task.createdAt) ? `Created ${fmt(task.createdAt)?.split(',')[0]}` : 'Created —')}
+                  {task.status === 'inprogress' && (fmt(task.startedAt) ? `Started ${fmt(task.startedAt)?.split(',')[0]}` : 'Started —')}
+                  {task.status === 'done' && (fmt(task.doneAt) ? `Done ${fmt(task.doneAt)?.split(',')[0]}` : 'Done —')}
                 </div>
               </div>
-
-              <div className="space-y-1.5 sm:space-y-2">
-                {tasks[col.id].map((t) => (
-                  <div
-                    key={t.id}
-                    className="rounded-lg border border-white/10 bg-white/[0.03] px-3 sm:px-4 py-2.5 sm:py-3"
-                  >
-                    <div className="text-xs sm:text-sm text-zinc-200">{t.title}</div>
-                    <div className="mt-0.5 sm:mt-1 text-[10px] sm:text-[11px] text-zinc-500">
-                      {col.id === 'todo' && (fmt(t.createdAt) ? `Created • ${fmt(t.createdAt)}` : 'Created • —')}
-                      {col.id === 'inprogress' && (fmt(t.startedAt) ? `Started • ${fmt(t.startedAt)}` : 'Started • —')}
-                      {col.id === 'done' && (fmt(t.doneAt) ? `Done • ${fmt(t.doneAt)}` : 'Done • —')}
-                    </div>
-                  </div>
-                ))}
-                {tasks[col.id].length === 0 && (
-                  <div className="px-1.5 sm:px-2 text-[10px] sm:text-xs text-zinc-500 italic">No tasks</div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
