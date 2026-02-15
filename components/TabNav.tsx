@@ -11,6 +11,7 @@ const tabs = [
   { id: 'leads', label: 'Leads' },
   { id: 'actions', label: 'Actions' },
   { id: 'build', label: 'Build queue' },
+  { id: 'school', label: 'School' },
 ];
 
 export default function TabNav({ activeTab, onTabChange }: TabNavProps) {

@@ -9,6 +9,7 @@ import RevenuePage from '@/components/RevenuePage';
 import LeadsPage from '@/components/LeadsPage';
 import ActionsPage from '@/components/ActionsPage';
 import BuildQueuePage from '@/components/BuildQueuePage';
+import SchoolPage from '@/components/SchoolPage';
 
 interface AgentStatus {
   status: 'idle' | 'active';
@@ -117,6 +118,8 @@ export default function Dashboard() {
         return <ActionsPage />;
       case 'build':
         return <BuildQueuePage />;
+      case 'school':
+        return <SchoolPage />;
       default:
         return renderDashboardContent();
     }
