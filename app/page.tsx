@@ -215,7 +215,7 @@ export default function Dashboard() {
 
   return (
     <main className="h-screen overflow-hidden bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.10),transparent_55%),radial-gradient(900px_circle_at_80%_20%,rgba(16,185,129,0.08),transparent_55%),linear-gradient(to_bottom_right,#050608,#070A0F,#050608)] text-white p-3 sm:p-6">
-      <div className="h-full w-full flex flex-col gap-4 sm:gap-6 min-h-0">
+      <div className="h-full w-full flex flex-col gap-4 sm:gap-5 min-h-0">
         <div className="relative flex items-center justify-center">
           <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
           <button
@@ -227,7 +227,7 @@ export default function Dashboard() {
         </div>
         
         {activeTab === 'dashboard' ? (
-          <div className="h-full w-full flex flex-col gap-4 sm:gap-6 min-h-0 overflow-y-auto lg:overflow-visible">
+          <div className="h-full w-full flex flex-col min-h-0 overflow-y-auto lg:overflow-visible">
             {renderDashboardContent()}
           </div>
         ) : (
