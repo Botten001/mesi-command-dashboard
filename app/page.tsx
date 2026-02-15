@@ -133,10 +133,10 @@ export default function Dashboard() {
 
   const renderDashboardContent = () => (
     <>
-      <div className="flex-1 min-h-0 flex flex-col">
-        {/* Centered Agent Card - equal spacing top and bottom */}
-        <div className="flex-shrink-0 flex items-center justify-center py-3 sm:py-4">
-          <div className="w-full max-w-[260px] sm:max-w-xs">
+      <div className="flex-1 min-h-0 flex flex-col gap-4 sm:gap-5">
+        {/* Centered Agent Card */}
+        <div className="flex-shrink-0 flex items-center justify-center">
+          <div className="w-full max-w-[240px] sm:max-w-xs">
             <AgentStatusCard
               name="Mesi Agent"
               role="SQUAD LEAD"
@@ -147,7 +147,7 @@ export default function Dashboard() {
         </div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 flex-1 min-h-0 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 flex-1 min-h-0 w-full">
           <div className="lg:col-span-2 min-h-0 order-2 lg:order-1">
             <ActivityFeed activities={activities} />
           </div>
