@@ -36,14 +36,12 @@ export default function Dashboard() {
         
         setAgentStatus(data);
         
-        // Skip logging on initial load
         if (initialLoadRef.current) {
           initialLoadRef.current = false;
           lastTaskRef.current = data.task;
           return;
         }
         
-        // Only log when task actually changes
         if (lastTaskRef.current !== data.task) {
           lastTaskRef.current = data.task;
           setActivities(prev => [{
@@ -61,7 +59,6 @@ export default function Dashboard() {
     pollStatus();
     const interval = setInterval(pollStatus, 2000);
     
-    // Only log initial connect once
     setActivities([{
       id: 'init',
       timestamp: Date.now(),
@@ -73,8 +70,8 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-7xl mx-auto">
+    <main className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white p-6">
+      <div className="max-w-7xl mx-auto h-screen flex flex-col gap-6">
         <AgentStatusCard
           name="Mesi Agent"
           role="SQUAD LEAD"
@@ -82,11 +79,11 @@ export default function Dashboard() {
           task={agentStatus.task}
         />
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 overflow-hidden">
+          <div className="h-full">
             <ActivityFeed activities={activities} />
           </div>
-          <div className="lg:col-span-1">
+          <div className="h-full">
             <TaskBoard />
           </div>
         </div>
