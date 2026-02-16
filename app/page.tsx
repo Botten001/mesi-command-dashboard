@@ -10,6 +10,7 @@ import LeadsPage from '@/components/LeadsPage';
 import ActionsPage from '@/components/ActionsPage';
 import BuildQueuePage from '@/components/BuildQueuePage';
 import SchoolPage from '@/components/SchoolPage';
+import ContentCreationPage from '@/components/ContentCreationPage';
 import LoginPage from '@/components/LoginPage';
 
 interface AgentStatus {
@@ -179,6 +180,13 @@ export default function Dashboard() {
     );
 
     switch (activeTab) {
+      case 'content':
+        return (
+          <div className="h-full flex flex-col min-h-0">
+            {compactCard}
+            <ContentCreationPage />
+          </div>
+        );
       case 'revenue':
         return (
           <div className="h-full flex flex-col min-h-0">

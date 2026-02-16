@@ -9,6 +9,7 @@ interface TabNavProps {
 
 const tabs = [
   { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+  { id: 'content', label: 'Content', icon: '🎬' },
   { id: 'revenue', label: 'Revenue', icon: '💰' },
   { id: 'leads', label: 'Leads', icon: '🎯' },
   { id: 'actions', label: 'Actions', icon: '⚡' },
