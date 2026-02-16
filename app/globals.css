@@ -24,18 +24,38 @@ body {
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* Pulsing border animation for active agent card */
-@keyframes pulse-border {
-  0%, 100% {
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3), 0 0 20px rgba(16, 185, 129, 0.15);
-    border-color: rgba(16, 185, 129, 0.5);
+/* Shimmer animation for active agent card */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
   }
-  50% {
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.5), 0 0 30px rgba(16, 185, 129, 0.25);
-    border-color: rgba(16, 185, 129, 0.8);
+  100% {
+    background-position: 200% 0;
   }
 }
 
-.animate-pulse-border {
-  animation: pulse-border 2s ease-in-out infinite;
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(16, 185, 129, 0.1) 25%,
+    rgba(16, 185, 129, 0.3) 50%,
+    rgba(16, 185, 129, 0.1) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
 }
