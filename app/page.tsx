@@ -133,10 +133,10 @@ export default function Dashboard() {
 
   const renderDashboardContent = () => (
     <>
-      <div className="flex-1 min-h-0 flex flex-col gap-4 sm:gap-5">
-        {/* Centered Agent Card */}
-        <div className="flex-shrink-0 flex items-center justify-center">
-          <div className="w-full max-w-[240px] sm:max-w-xs">
+      <div className="flex-1 min-h-0 flex flex-col gap-3 sm:gap-5">
+        {/* Mobile Logout + Centered Agent Card */}
+        <div className="flex-shrink-0 flex flex-col items-center gap-2">
+          <div className="w-full max-w-[220px] sm:max-w-xs">
             <AgentStatusCard
               name="Mesi Agent"
               role="SQUAD LEAD"
@@ -144,10 +144,16 @@ export default function Dashboard() {
               task={agentStatus.task}
             />
           </div>
+          <button
+            onClick={handleLogout}
+            className="sm:hidden text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors px-3 py-1.5 rounded-md hover:bg-zinc-800/50"
+          >
+            Log out
+          </button>
         </div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 flex-1 min-h-0 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-5 flex-1 min-h-0 w-full">
           <div className="lg:col-span-2 min-h-0 order-2 lg:order-1">
             <ActivityFeed activities={activities} />
           </div>
@@ -215,12 +221,12 @@ export default function Dashboard() {
 
   return (
     <main className="h-screen overflow-hidden bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.10),transparent_55%),radial-gradient(900px_circle_at_80%_20%,rgba(16,185,129,0.08),transparent_55%),linear-gradient(to_bottom_right,#050608,#070A0F,#050608)] text-white p-3 sm:p-6">
-      <div className="h-full w-full flex flex-col gap-4 sm:gap-5 min-h-0">
+      <div className="h-full w-full flex flex-col gap-3 sm:gap-5 min-h-0">
         <div className="relative flex items-center justify-center">
           <TabNav activeTab={activeTab} onTabChange={setActiveTab} />
           <button
             onClick={handleLogout}
-            className="absolute right-0 text-[10px] sm:text-xs text-zinc-500 hover:text-zinc-300 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-zinc-800/50"
+            className="hidden sm:block absolute right-0 text-[10px] sm:text-xs text-zinc-500 hover:text-zinc-300 transition-colors px-2 sm:px-3 py-1.5 rounded-md hover:bg-zinc-800/50"
           >
             Log out
           </button>
