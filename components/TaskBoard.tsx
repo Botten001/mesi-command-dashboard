@@ -135,23 +135,23 @@ export default function TaskBoard() {
         {filteredTasks.length === 0 ? (
           <p className="text-zinc-500 text-xs sm:text-sm text-center py-8">No tasks</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
             {filteredTasks.map((task) => (
               <div
                 key={task.id}
-                className={`rounded-lg border p-3 sm:p-4 ${getColorClasses(task.status)} hover:bg-white/[0.06] transition-all`}
+                className={`rounded-lg border p-1.5 sm:p-3 ${getColorClasses(task.status)} hover:bg-white/[0.06] transition-all`}
               >
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <span className={`text-[9px] sm:text-[10px] font-medium px-1.5 py-0.5 rounded-full border ${getStatusBadge(task.status)}`}>
+                <div className="flex items-start justify-between gap-1 mb-1">
+                  <span className={`text-[8px] sm:text-[10px] font-medium px-1 py-0.5 rounded-full border ${getStatusBadge(task.status)} truncate max-w-full`}>
                     {task.status === 'todo' ? 'To do' : task.status === 'inprogress' ? 'In progress' : 'Done'}
                   </span>
                 </div>
                 
-                <h3 className="text-xs sm:text-sm font-medium text-zinc-200 leading-snug mb-2 line-clamp-2">
+                <h3 className="text-[10px] sm:text-sm font-medium text-zinc-200 leading-tight mb-1 line-clamp-2">
                   {task.title}
                 </h3>
                 
-                <div className="text-[9px] sm:text-[10px] text-zinc-500">
+                <div className="text-[8px] sm:text-[10px] text-zinc-500 truncate">
                   {task.status === 'todo' && (fmt(task.createdAt) ? `Created ${fmt(task.createdAt)?.split(',')[0]}` : 'Created —')}
                   {task.status === 'inprogress' && (fmt(task.startedAt) ? `Started ${fmt(task.startedAt)?.split(',')[0]}` : 'Started —')}
                   {task.status === 'done' && (fmt(task.doneAt) ? `Done ${fmt(task.doneAt)?.split(',')[0]}` : 'Done —')}
