@@ -35,7 +35,9 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
           {activities.length === 0 ? (
             <p className="text-zinc-500 text-xs sm:text-sm px-2">No activity yet…</p>
           ) : (
-            activities.map((activity) => (
+            activities
+              .filter((activity) => activity.message !== "Waiting for task")
+              .map((activity) => (
               <div
                 key={activity.id}
                 className={`rounded-lg border px-3 sm:px-4 py-2.5 sm:py-3 ${getTypeStyles(activity.type)}`}

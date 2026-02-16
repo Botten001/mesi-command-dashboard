@@ -45,7 +45,7 @@ export default function AgentStatusCard({ name, role, status, task, compact }: A
       className={
         "relative rounded-lg sm:rounded-xl px-3 sm:px-4 py-3 sm:py-4 transition-all border bg-zinc-950/40 backdrop-blur-sm text-center " +
         (active
-          ? "border-emerald-500/35 shadow-[0_0_0_1px_rgba(16,185,129,0.25),0_0_12px_rgba(16,185,129,0.08)]"
+          ? "border-emerald-500/50 shadow-[0_0_0_2px_rgba(16,185,129,0.3),0_0_20px_rgba(16,185,129,0.15)] animate-pulse-border"
           : "border-white/10")
       }
     >
